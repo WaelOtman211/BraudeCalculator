@@ -1,124 +1,280 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Calculator</title>
+    <title>Scientific Calculator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
+            text-align: center;
         }
 
-        #calculator {
-            background-color: #fff;
+        .calculator {
+            margin: 50px auto;
+            width: 300px;
+            border: 1px solid black;
             border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(7, 223, 115, 0.1);
+            background-color: rgb(112, 172, 172); /* Cyan background color */
+
         }
 
-        #display {
-            font-size: 2em;
-            height: 70px;
-            width: 100%;
-            text-align: right;
+        .calculator input[type="text"] {
+            width: 80%;
             padding: 10px;
-            box-sizing: border-box;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
         }
 
-        .row {
-            display: flex;
+        .calculator input[type="button"] {
+            width: 45px;
+            height: 45px;
+            margin: 5px;
+            font-size: 18px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .calculator input[type="button"]:hover {
+            background-color: #f08d01;
+        }
+
+        /* Grey for memory buttons */
+        .calculator input[value="MS"],
+        .calculator input[value="M+"],
+        .calculator input[value="M-"],
+        .calculator input[value="MC"] {
+            background-color: #888888;
+            color: white;
+        }
+
+        /* Orange for basic operators */
+        .calculator input[value="/"],
+        .calculator input[value="*"],
+        .calculator input[value="%"],
+        .calculator input[value="+"],
+        .calculator input[value="-"],
+        .calculator input[value="="] {
+            background-color: orange;
+            color: white;
+        }
+
+        /* Red for clear button */
+        .calculator input[value="C"] {
+            background-color: red;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="calculator">
+        <input type="text" id="display" readonly>
+        <input type="button" value="MS" onclick="memoryStore()">
+        <input type="button" value="M+" onclick="memoryAdd()">
+        <input type="button" value="M-" onclick="memorySubtract()">
+        <input type="button" value="MC" onclick="memoryClear()">
+        <input type="button" value="C" onclick="clearDisplay()">
+        <br>
+        <input type="button" value="n!" onclick="factorial()">
+        <input type="button" value="7" onclick="addToDisplay('7')">
+        <input type="button" value="8" onclick="addToDisplay('8')">
+        <input type="button" value="9" onclick="addToDisplay('9')">
+        <input type="button" value="%" onclick="percent()">
+
+
+        <br>
+        <input type="button" value="√" onclick="sqrt()">
+        <input type="button" value="4" onclick="addToDisplay('4')">
+        <input type="button" value="5" onclick="addToDisplay('5')">
+        <input type="button" value="6" onclick="addToDisplay('6')">
+        <input type="button" value="*" onclick="addToDisplay('*')">
+
+        <br>
+        <input type="button" value="x²" onclick="squared()">
+        <input type="button" value="1" onclick="addToDisplay('1')">
+        <input type="button" value="2" onclick="addToDisplay('2')">
+        <input type="button" value="3" onclick="addToDisplay('3')">
+        <input type="button" value="-" onclick="addToDisplay('-')">
+
+        <br>
+        <input type="button" value="=" onclick="calculate()">
+        <input type="button" value="." onclick="addToDisplay('.')">
+        <input type="button" value="0" onclick="addToDisplay('0')">
+        <input type="button" value="/" onclick="addToDisplay('/')">
+        <input type="button" value="+" onclick="addToDisplay('+')">
+        
+        <br>
+        <input type="button" value="sin" onclick="sine()">
+        <input type="button" value="cos" onclick="cosine()">
+        <input type="button" value="tan" onclick="tangent()">
+        <input type="button" value="log" onclick="log()">
+        <input type="button" value="ln" onclick="ln()">
+        <br>
+
+        <input type="button" value="2^x" onclick="powerOfTwo()">
+        <input type="button" value="2^nd" onclick="secondPower()">
+        <input type="button" value="π" onclick="pi()">
+        <input type="button" value="(" onclick="addToDisplay('(')">
+        <input type="button" value=")" onclick="addToDisplay(')')">
+        <br>
+        <input type="button" value="exp" onclick="exponential()">
+        <input type="button" value="|x|" onclick="absolute()">
+        <input type="button" value="1/x" onclick="reciprocal()">
+        <input type="button" value="x^y" onclick="power()">
+        <input type="button" value="10^x" onclick="tenPower()">
+        <br>
+
+
+
+    </div>
+
+    <script>
+        let memory = 0;
+        function addToDisplay(value) {
+            document.getElementById('display').value += value;
+        }
+
+        function calculate() {
+            try {
+                document.getElementById('display').value = eval(document.getElementById('display').value);
+            } catch (error) {
+                document.getElementById('display').value = 'Error';
+            }
         }
         
 
-        .button {
-            flex: 1;
-            padding: 20px;
-            font-size: 1.5em;
-            cursor: pointer;
-            border: none;
-            background-color: #f2f2f2;
-            transition: background-color 0.3s ease;
+        function memoryStore() {
+            memory = eval(document.getElementById('display').value);
         }
 
-        .button:hover {
-            background-color: #ddd;
+        function memoryAdd() {
+            memory += eval(document.getElementById('display').value);
         }
 
-        .button.operator {
-            background-color: #f0ad4e;
-            color: #fff;
+        function memorySubtract() {
+            memory -= eval(document.getElementById('display').value);
         }
 
-        .button.operator:hover {
-            background-color: #ec971f;
+        function memoryClear() {
+            memory = 0;
         }
 
-        .button.double {
-            flex: 2;
-        }
-    </style>
-  </head>
-  <body>
-    <div id="calculator">
-        <div id="display">0</div>
-        <div class="row">
-            <button class="button">7</button>
-            <button class="button">8</button>
-            <button class="button">9</button>
-            <button class="button operator">/</button>
-        </div>
-        <div class="row">
-            <button class="button">4</button>
-            <button class="button">5</button>
-            <button class="button">6</button>
-            <button class="button operator">*</button>
-        </div>
-        <div class="row">
-            <button class="button">1</button>
-            <button class="button">2</button>
-            <button class="button">3</button>
-            <button class="button operator">-</button>
-        </div>
-        <div class="row">
-            <button class="button double">0</button>
-            <button class="button">.</button>
-            <button class="button operator">+</button>
-            <button class="button operator double">=</button>
-        </div>
-    </div>
-     <!-- special scripts for integration in App Gallery - must be placed at the bottom of the HTML after your code -->
-     <script>
-        // custom config for the MTW app 
-        const mtwAppConfig = {
-            border: true // app border in the MTW page                    
+        function clearDisplay() {
+            document.getElementById('display').value = '';
         }
 
-        ///////////////////////////////////////////////////////
-        // implement this functions in order to use private API        
-        const sendPrivateApiRequest = async () => {
-            // your code here:
-            // sendRequestToParent({ cat: 'getAssets' })
-        }        
-
-        const acceptPrivateApiResponse = async (data) => {
-            // process received data here:
-            // console.log(data)
+        function sqrt() {
+            document.getElementById('display').value = Math.sqrt(eval(document.getElementById('display').value));
         }
 
-        // use this in order to send on document load
-        document.addEventListener('DOMContentLoaded', () => {
-            // your code here:
-            //sendRequestToParent({ method: 'getAssets' })
-        })
+        function squared() {
+            document.getElementById('display').value = Math.pow(eval(document.getElementById('display').value), 2);
+        }
 
+        function sine() {
+            document.getElementById('display').value = Math.sin(eval(document.getElementById('display').value));
+        }
+
+        function cosine() {
+            document.getElementById('display').value = Math.cos(eval(document.getElementById('display').value));
+        }
+
+        function tangent() {
+            document.getElementById('display').value = Math.tan(eval(document.getElementById('display').value));
+        }
+
+        function log() {
+            document.getElementById('display').value = Math.log10(eval(document.getElementById('display').value));
+        }
+
+        function ln() {
+            document.getElementById('display').value = Math.log(eval(document.getElementById('display').value));
+        }
+
+        function percent() {
+            document.getElementById('display').value = eval(document.getElementById('display').value) / 100;
+        }
+
+        function powerOfTwo() {
+            document.getElementById('display').value = Math.pow(2, eval(document.getElementById('display').value));
+        }
+
+        function secondPower() {
+            document.getElementById('display').value = Math.pow(eval(document.getElementById('display').value), 2);
+        }
+
+        function pi() {
+            document.getElementById('display').value += Math.PI;
+        }
+
+        function exponential() {
+            document.getElementById('display').value = Math.exp(eval(document.getElementById('display').value));
+        }
+
+        function absolute() {
+            document.getElementById('display').value = Math.abs(eval(document.getElementById('display').value));
+        }
+
+        function reciprocal() {
+            document.getElementById('display').value = 1 / eval(document.getElementById('display').value);
+        }
+
+        function power() {
+            document.getElementById('display').value += "^";
+        }
+
+        function tenPower() {
+            document.getElementById('display').value = Math.pow(10, eval(document.getElementById('display').value));
+        }
+
+        function factorial() {
+            let num = eval(document.getElementById('display').value);
+            let result = 1;
+            for (let i = 2; i <= num; i++) {
+                result *= i;
+            }
+            document.getElementById('display').value = result;
+        }
     </script>
-    <script src="https://morethanwallet.com/appstore/index.js"></script>
-  </body>
+</body>
+
+
+
+<!-- special scripts for integration in App Gallery - must be placed at the bottom of the HTML after your code -->
+<script>
+    // custom config for the MTW app 
+    const mtwAppConfig = {
+        border: true // app border in the MTW page                    
+    }
+
+    ///////////////////////////////////////////////////////
+    // implement this functions in order to use private API        
+    const sendPrivateApiRequest = async () => {
+        // your code here:
+        // sendRequestToParent({ cat: 'getAssets' })
+    }
+
+    const acceptPrivateApiResponse = async (data) => {
+        // process received data here:
+        // console.log(data)
+    }
+
+    // use this in order to send on document load
+    document.addEventListener('DOMContentLoaded', () => {
+        // your code here:
+        //sendRequestToParent({ method: 'getAssets' })
+    })
+
+</script>
+<script src="https://morethanwallet.com/appstore/index.js"></script>
+
+
 </html>
